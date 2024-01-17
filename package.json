@@ -3,7 +3,7 @@
     "module": "index.ts",
     "type": "module",
     "scripts": {
-        "dev": "bun run --watch index.ts",
+        "dev": "bun run --watch index.ts --name event-api",
         "start": "pm2 start --interpreter ~/.bun/bin/bun index.ts"
     },
     "devDependencies": {

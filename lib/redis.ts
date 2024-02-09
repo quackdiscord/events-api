@@ -1,26 +1,9 @@
-import { createClient, RedisClientOptions } from "redis";
-import logger from "./logger";
+import { Redis } from "@upstash/redis";
 import config from "../config";
 
-const redisOptions: RedisClientOptions = {
-    socket: {
-        host: config.redis.host,
-        port: parseInt(config.redis.port as string)
-    },
-    password: config.redis.password
-};
-
-const redis = createClient(redisOptions);
-
-redis.on("error", (error) => {
-    logger.error(error);
+const redis = new Redis({
+    url: config.redis.url as string,
+    token: config.redis.token as string
 });
 
-redis.once("ready", () => {
-    logger.info("Connected to Redis.");
-});
-
-redis.connect();
-
-// export the redis client
 export { redis };

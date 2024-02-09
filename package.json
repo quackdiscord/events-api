@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@planetscale/database": "^1.11.0",
+    "@upstash/redis": "^1.28.3",
     "discord.js": "^14.13.0",
     "drizzle-orm": "^0.28.6",
     "kafkajs": "^2.2.4",

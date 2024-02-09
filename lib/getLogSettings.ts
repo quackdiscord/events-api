@@ -12,7 +12,7 @@ async function getLogSettings(logType: string, guildId: string) {
     let guildSettings = null;
 
     // get the guild from redis
-    const redisData = await redis.hGet("seeds:logsettings", guildId);
+    const redisData = await redis.hget("seeds:logsettings", guildId);
 
     if (!redisData) {
         // check db
@@ -28,7 +28,9 @@ async function getLogSettings(logType: string, guildId: string) {
                 guildSettings = JSON.stringify(dbData[0]);
 
                 // set the redis key
-                await redis.hSet("seeds:logsettings", guildId, guildSettings);
+                await redis.hset("seeds:logsettings", {
+                    [guildId]: guildSettings
+                });
             }
         } catch (err) {
             logger.error(err);
@@ -40,7 +42,7 @@ async function getLogSettings(logType: string, guildId: string) {
     }
 
     // now check if the logType is in the enabled_types array
-    const guildSettingsJson = JSON.parse(guildSettings);
+    const guildSettingsJson = guildSettings as any;
     const enabledTypes = guildSettingsJson.enabled_types;
 
     if (enabledTypes.includes(logType)) {

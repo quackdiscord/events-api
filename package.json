@@ -1,25 +1,24 @@
 {
-    "name": "events-api",
-    "module": "index.ts",
-    "type": "module",
-    "scripts": {
-        "dev": "bun run --watch index.ts",
-        "start": "pm2 start --interpreter ~/.bun/bin/bun index.ts --name event-api"
-    },
-    "devDependencies": {
-        "bun-types": "latest",
-        "drizzle-kit": "^0.19.13"
-    },
-    "peerDependencies": {
-        "typescript": "^5.0.0"
-    },
-    "dependencies": {
-        "@grotto/logysia": "^0.0.5",
-        "@planetscale/database": "^1.11.0",
-        "discord.js": "^14.13.0",
-        "drizzle-orm": "^0.28.6",
-        "elysia": "^0.7.20",
-        "redis": "^4.6.10",
-        "winston": "^3.11.0"
-    }
+  "name": "events-api",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch index.ts",
+    "start": "pm2 start --interpreter ~/.bun/bin/bun index.ts --name event-api"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "drizzle-kit": "^0.19.13"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@planetscale/database": "^1.11.0",
+    "discord.js": "^14.13.0",
+    "drizzle-orm": "^0.28.6",
+    "kafkajs": "^2.2.4",
+    "redis": "^4.6.10",
+    "winston": "^3.11.0"
+  }
 }

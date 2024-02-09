@@ -1,44 +1,38 @@
-import { Context } from "elysia"
-import { getLogSettings } from "../lib/getLogSettings"
-import sendMessage from "../lib/sendMessage"
-import logger from "../lib/logger"
-import { time } from "discord.js"
+import { getLogSettings } from "../lib/getLogSettings";
+import sendMessage from "../lib/sendMessage";
+import logger from "../lib/logger";
+import { time } from "discord.js";
 
 // get memeber event log settings
-async function getMemberEventLogSettings(logType:string, serverid:any) {
-
-    const logSettings = await getLogSettings(logType, serverid)
+async function getMemberEventLogSettings(logType: string, serverid: any) {
+    const logSettings = await getLogSettings(logType, serverid);
 
     if (logSettings) {
-        return logSettings
+        return logSettings;
     } else {
-        return false
+        return false;
     }
-
 }
 
 // member ban event
-async function memberBanEvent(context:Context) {
+async function memberBanEvent(data: any) {
+    const eventType = "member_banned";
 
-    const eventType = 'member_banned'
+    const event = data.event,
+        guild = data.guild,
+        user = data.user,
+        reason = data.reason,
+        moderator = data.moderator;
 
-    const body:any = context.body
-
-    const event = body.data.event,
-    guild = body.data.guild,
-    user = body.data.user,
-    reason = body.data.reason,
-    moderator = body.data.moderator
-
-    let settings:any = await getMemberEventLogSettings(eventType, guild.id)
+    let settings: any = await getMemberEventLogSettings(eventType, guild.id);
     if (!settings) {
-        return
+        return;
     }
 
-    settings = settings.settings
+    settings = settings.settings;
 
     if (!settings.types.members) {
-        return
+        return;
     }
 
     const embed = {
@@ -47,56 +41,53 @@ async function memberBanEvent(context:Context) {
         thumbnail: {
             url: "https://cdn.discordapp.com/emojis/1064442673806704672.webp"
         },
-        color: 0xE75151,
+        color: 0xe75151,
         author: {
             name: user.username,
-            icon_url: user.avatarURL,
+            icon_url: user.avatarURL
         },
         footer: {
             text: "Event ID: " + event.id + " | " + eventType + " event"
         },
-        timestamp: new Date(),
-    }
+        timestamp: new Date()
+    };
 
-    const send = await sendMessage({
-        embeds: [embed],
-    }, settings.types.members.webhook_url).catch((error) => {
-        logger.error("Error sending " + eventType + " webhook", error)
-        context.set.status = 500
-        return { error: "Error sending " + eventType + " webhook" }
-    })
-    
+    const send = await sendMessage(
+        {
+            embeds: [embed]
+        },
+        settings.types.members.webhook_url
+    ).catch((error) => {
+        logger.error("Error sending " + eventType + " webhook", error);
+        return { error: "Error sending " + eventType + " webhook" };
+    });
+
     if (!send) {
-        context.set.status = 500
-        return { error: "Error sending " + eventType + " webhook" }
+        return { error: "Error sending " + eventType + " webhook" };
     }
 
-    return true
-
+    return true;
 }
 
 // member unban event
-async function memberUnbanEvent(context:Context) {
+async function memberUnbanEvent(data: any) {
+    const eventType = "member_unbanned";
 
-    const eventType = 'member_unbanned'
+    const event = data.event,
+        guild = data.guild,
+        user = data.user,
+        reason = data.reason,
+        moderator = data.moderator;
 
-    const body:any = context.body
-
-    const event = body.data.event,
-    guild = body.data.guild,
-    user = body.data.user,
-    reason = body.data.reason,
-    moderator = body.data.moderator
-
-    let settings:any = await getMemberEventLogSettings(eventType, guild.id)
+    let settings: any = await getMemberEventLogSettings(eventType, guild.id);
     if (!settings) {
-        return
+        return;
     }
 
-    settings = settings.settings
+    settings = settings.settings;
 
     if (!settings.types.members) {
-        return
+        return;
     }
 
     const embed = {
@@ -105,177 +96,185 @@ async function memberUnbanEvent(context:Context) {
         thumbnail: {
             url: "https://cdn.discordapp.com/emojis/1064442704936828968.webp"
         },
-        color: 0x2C2F33,
+        color: 0x2c2f33,
         author: {
             name: user.username,
-            icon_url: user.avatarURL,
+            icon_url: user.avatarURL
         },
         footer: {
             text: "Event ID: " + event.id + " | " + eventType + " event"
         },
-        timestamp: new Date(),
-    }
+        timestamp: new Date()
+    };
 
-    const send = await sendMessage({
-        embeds: [embed],
-    }, settings.types.members.webhook_url).catch((error) => {
-        logger.error("Error sending " + eventType + " webhook", error)
-        context.set.status = 500
-        return { error: "Error sending " + eventType + " webhook" }
-    })
-    
+    const send = await sendMessage(
+        {
+            embeds: [embed]
+        },
+        settings.types.members.webhook_url
+    ).catch((error) => {
+        logger.error("Error sending " + eventType + " webhook", error);
+        return { error: "Error sending " + eventType + " webhook" };
+    });
+
     if (!send) {
-        context.set.status = 500
-        return { error: "Error sending " + eventType + " webhook" }
+        return { error: "Error sending " + eventType + " webhook" };
     }
 
-    return true
-
+    return true;
 }
 
 // member join event
-async function memberJoinEvent(context:Context) {
+async function memberJoinEvent(data: any) {
+    const eventType = "member_join";
 
-    const eventType = 'member_join'
+    const event = data.event,
+        guild = data.guild,
+        user = data.user;
 
-    const body:any = context.body
-
-    const event = body.data.event,
-    guild = body.data.guild,
-    user = body.data.user
-
-    let settings:any = await getMemberEventLogSettings(eventType, guild.id)
+    let settings: any = await getMemberEventLogSettings(eventType, guild.id);
     if (!settings) {
-        return
+        return;
     }
 
-    settings = settings.settings
+    settings = settings.settings;
 
     if (!settings.types.members) {
-        return
+        return;
     }
 
-    const newAccount = Date.now() - user.createdTimestamp < 1000 * 60 * 60 * 24 * 7
+    const newAccount = Date.now() - user.createdTimestamp < 1000 * 60 * 60 * 24 * 7;
 
     const embed = {
         title: "Member Joined",
-        description: `**Member:** <@${user.id}> (${user.id}) - Member #${guild.memberCount.toLocaleString('en-US')}\n**Account Created:** ${time(user.createdAt, "F")} ${newAccount ? "⚠️ New Account ⚠️" : ""}`,
+        description: `**Member:** <@${user.id}> (${user.id}) - Member #${guild.memberCount.toLocaleString(
+            "en-US"
+        )}\n**Account Created:** ${time(user.createdAt, "F")} ${newAccount ? "⚠️ New Account ⚠️" : ""}`,
         thumbnail: {
             url: "https://cdn.discordapp.com/emojis/1064442704936828968.webp"
         },
-        color: 0xEB459E,
+        color: 0xeb459e,
         author: {
             name: user.username,
-            icon_url: user.avatarURL,
+            icon_url: user.avatarURL
         },
         footer: {
             text: "Event ID: " + event.id + " | " + eventType + " event"
         },
-        timestamp: new Date(),
-    }
+        timestamp: new Date()
+    };
 
-    const send = await sendMessage({
-        embeds: [embed],
-    }, settings.types.members.webhook_url).catch((error) => {
-        logger.error("Error sending " + eventType + " webhook", error)
-        context.set.status = 500
-        return { error: "Error sending " + eventType + " webhook" }
-    })
-    
+    const send = await sendMessage(
+        {
+            embeds: [embed]
+        },
+        settings.types.members.webhook_url
+    ).catch((error) => {
+        logger.error("Error sending " + eventType + " webhook", error);
+        return { error: "Error sending " + eventType + " webhook" };
+    });
+
     if (!send) {
-        context.set.status = 500
-        return { error: "Error sending " + eventType + " webhook" }
+        return { error: "Error sending " + eventType + " webhook" };
     }
 
-    return true
-
+    return true;
 }
 
 // member leave event
-async function memberLeaveEvent(context:Context) {
+async function memberLeaveEvent(data: any) {
+    const eventType = "member_leave";
 
-    const eventType = 'member_leave'
+    const event = data.event,
+        guild = data.guild,
+        user = data.user,
+        roles = data.roles;
 
-    const body:any = context.body
-
-    const event = body.data.event,
-    guild = body.data.guild,
-    user = body.data.user,
-    roles = body.data.roles
-
-    let settings:any = await getMemberEventLogSettings(eventType, guild.id)
+    let settings: any = await getMemberEventLogSettings(eventType, guild.id);
     if (!settings) {
-        return
+        return;
     }
 
-    settings = settings.settings
+    settings = settings.settings;
 
     if (!settings.types.members) {
-        return
+        return;
     }
 
     // get the users roles
-    const rolesString = roles.map((role:any) => { return `<@&${role}>` }).join(", ").replace(`<@&${guild.id}>`, "")
+    const rolesString = roles
+        .map((role: any) => {
+            return `<@&${role}>`;
+        })
+        .join(", ")
+        .replace(`<@&${guild.id}>`, "");
 
     const embed = {
         title: "Member Left",
-        description: "**Member:** <@" + user.id + "> (" + user.id + ") \n**Joined:** " + time(user.joinedAt, "F") + " - " + time(user.joinedAt, "R") + "\n**Roles:** " + rolesString,
+        description:
+            "**Member:** <@" +
+            user.id +
+            "> (" +
+            user.id +
+            ") \n**Joined:** " +
+            time(user.joinedAt, "F") +
+            " - " +
+            time(user.joinedAt, "R") +
+            "\n**Roles:** " +
+            rolesString,
         thumbnail: {
             url: "https://cdn.discordapp.com/emojis/1064442673806704672.webp"
         },
-        color: 0x5865F2,
+        color: 0x5865f2,
         author: {
             name: user.username,
-            icon_url: user.avatarURL,
+            icon_url: user.avatarURL
         },
         footer: {
             text: "Event ID: " + event.id + " | " + eventType + " event"
         },
-        timestamp: new Date(),
-    }
+        timestamp: new Date()
+    };
 
-    const send = await sendMessage({
-        embeds: [embed],
-    }, settings.types.members.webhook_url).catch((error) => {
-        logger.error("Error sending " + eventType + " webhook", error)
-        context.set.status = 500
-        return { error: "Error sending " + eventType + " webhook" }
-    })
-    
+    const send = await sendMessage(
+        {
+            embeds: [embed]
+        },
+        settings.types.members.webhook_url
+    ).catch((error) => {
+        logger.error("Error sending " + eventType + " webhook", error);
+        return { error: "Error sending " + eventType + " webhook" };
+    });
+
     if (!send) {
-        context.set.status = 500
-        return { error: "Error sending " + eventType + " webhook" }
+        return { error: "Error sending " + eventType + " webhook" };
     }
 
-    return true
-
+    return true;
 }
 
 // member update event
-async function memberUpdateEvent(context:Context) {
+async function memberUpdateEvent(data: any) {
+    const eventType = "member_update";
 
-    const eventType = 'member_update'
+    const guild = data.guild,
+        oldMember = data.oldMember,
+        newMember = data.newMember,
+        newRoles = data.newRoles,
+        oldRoles = data.oldRoles;
 
-    const body:any = context.body
-
-    const guild = body.data.guild,
-    oldMember = body.data.oldMember,
-    newMember = body.data.newMember,
-    newRoles = body.data.newRoles,
-    oldRoles = body.data.oldRoles
-
-    let settings:any = await getMemberEventLogSettings(eventType, guild.id)
+    let settings: any = await getMemberEventLogSettings(eventType, guild.id);
     if (!settings) {
-        return
+        return;
     }
 
-    settings = settings.settings
+    settings = settings.settings;
 
     if (!settings.types.members) {
-        return
+        return;
     }
 
-    let descString = `**Member:** <@${newMember.userId}> (${newMember.userId})\n\`\`\`diff\n`
+    let descString = `**Member:** <@${newMember.userId}> (${newMember.userId})\n\`\`\`diff\n`;
 
     const embed = {
         title: "Member Updated",
@@ -283,61 +282,65 @@ async function memberUpdateEvent(context:Context) {
         thumbnail: {
             url: "https://cdn.discordapp.com/emojis/1064444245588578385.webp"
         },
-        color: 0x4CA99D,
+        color: 0x4ca99d,
         author: {
             name: newMember.username,
-            icon_url: newMember.avatarURL,
+            icon_url: newMember.avatarURL
         },
         footer: {
             text: "Event ID: " + newMember.userId + " | " + eventType + " event"
         },
-        timestamp: new Date(),
-    }
+        timestamp: new Date()
+    };
 
     if (oldMember.nickname !== newMember.nickname) {
-        embed.description += `\nNickname Changed:\n- ${oldMember.nickname ? oldMember.nickname : "None"}\n+ ${newMember.nickname ? newMember.nickname : "None"}\n`
-    } if (oldMember.avatar !== newMember.avatar) {
-        embed.description += `\nAvatar Changed:\n- ${oldMember.avatarURL}\n+ ${newMember.avatarURL}\n`
-    } if (oldMember.username !== newMember.username) {
-        embed.description += `\nUsername Changed:\n- ${oldMember.username}\n+ ${newMember.username}\n`
-    } 
-    
-    embed.description += "```"
+        embed.description += `\nNickname Changed:\n- ${oldMember.nickname ? oldMember.nickname : "None"}\n+ ${
+            newMember.nickname ? newMember.nickname : "None"
+        }\n`;
+    }
+    if (oldMember.avatar !== newMember.avatar) {
+        embed.description += `\nAvatar Changed:\n- ${oldMember.avatarURL}\n+ ${newMember.avatarURL}\n`;
+    }
+    if (oldMember.username !== newMember.username) {
+        embed.description += `\nUsername Changed:\n- ${oldMember.username}\n+ ${newMember.username}\n`;
+    }
+
+    embed.description += "```";
 
     if (oldRoles.length !== newRoles.length) {
-        const addedRoles = newRoles.filter((role:any) => !oldRoles.includes(role)).map((role:any) => `<@&${role}>`).join(", ")
-        const removedRoles = oldRoles.filter((role:any) => !newRoles.includes(role)).map((role:any) => `<@&${role}>`).join(", ")
-        embed.description += `\n**Roles Changed:**`
+        const addedRoles = newRoles
+            .filter((role: any) => !oldRoles.includes(role))
+            .map((role: any) => `<@&${role}>`)
+            .join(", ");
+        const removedRoles = oldRoles
+            .filter((role: any) => !newRoles.includes(role))
+            .map((role: any) => `<@&${role}>`)
+            .join(", ");
+        embed.description += `\n**Roles Changed:**`;
         if (addedRoles) {
-            embed.description += `\n**Added:** ${addedRoles}`
+            embed.description += `\n**Added:** ${addedRoles}`;
         }
         if (removedRoles) {
-            embed.description += `\n**Removed:** ${removedRoles}`
+            embed.description += `\n**Removed:** ${removedRoles}`;
         }
     }
 
-    const send = await sendMessage({
-        embeds: [embed],
-    }, settings.types.members.webhook_url).catch((error) => {
-        logger.error("Error sending " + eventType + " webhook", error)
-        context.set.status = 500
-        return { error: "Error sending " + eventType + " webhook" }
-    })
-    
+    const send = await sendMessage(
+        {
+            embeds: [embed]
+        },
+        settings.types.members.webhook_url
+    ).catch((error) => {
+        logger.error("Error sending " + eventType + " webhook", error);
+        return { error: "Error sending " + eventType + " webhook" };
+    });
+
     if (!send) {
-        context.set.status = 500
-        return { error: "Error sending " + eventType + " webhook" }
+        return { error: "Error sending " + eventType + " webhook" };
     }
 
-    return true
-
+    return true;
 }
 
 // export the events
-export {
-    memberBanEvent,
-    memberUnbanEvent,
-    memberJoinEvent,
-    memberLeaveEvent,
-    memberUpdateEvent
-}   
+export { memberBanEvent, memberUnbanEvent, memberJoinEvent, memberLeaveEvent, memberUpdateEvent };

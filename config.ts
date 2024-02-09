@@ -12,7 +12,13 @@ const config = {
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
         password: process.env.REDIS_PASSWORD
-    }
-}
+    },
 
-export default config
+    kafka: {
+        brokers: [process.env.KAFKA_BROKER as string],
+        username: process.env.KAFKA_USERNAME as string,
+        password: process.env.KAFKA_PASSWORD as string
+    }
+};
+
+export default config;

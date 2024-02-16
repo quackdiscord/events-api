@@ -8,8 +8,8 @@ export default async function sendMessage(data: any, webhookUrl: string) {
         },
         body: JSON.stringify({
             embeds: data.embeds,
-            username: "Seeds Logging",
-            avatar_url: "https://seedsbot.xyz/images/webp/logo.webp"
+            username: "Quack Logging",
+            avatar_url: "https://quackbot.xyz/images/webp/logo.webp"
         })
     });
 

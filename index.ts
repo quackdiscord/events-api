@@ -9,14 +9,19 @@ import * as MessageEvents from "./events/messageEvents";
 // connect to kafka
 const kfReceiver = kafka.consumer({ groupId: "consumer-1" });
 
+await kfReceiver.connect();
+
+// reciever events
+kfReceiver.on("consumer.connect", () => {
+    log.info(`Consumer connected`);
+});
+
 kfReceiver.on("consumer.crash", (error) => {
     log.error(`Consumer crashed: ${error}`);
 });
 
-await kfReceiver.connect();
-
-kfReceiver.on("consumer.connect", (error) => {
-    log.info(`Consumer connected`);
+kfReceiver.on("consumer.disconnect", (error) => {
+    log.error(`Consumer disconnected: ${error}`);
 });
 
 kfReceiver.subscribe({ topic: "event-logs" });

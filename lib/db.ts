@@ -1,12 +1,11 @@
-import { drizzle } from "drizzle-orm/planetscale-serverless";
-import { connect } from "@planetscale/database";
+// import { MongoClient, ServerApiVersion } from 'mongodb';
+import { drizzle } from "drizzle-orm/mysql2";
+import mysql from "mysql2/promise";
 import config from "../config";
 
 // create the connection
-const connection = connect({
-    host: config.database.host,
-    username: config.database.username,
-    password: config.database.password
+const connection = await mysql.createConnection({
+    uri: config.db.uri
 });
 
 const db = drizzle(connection);

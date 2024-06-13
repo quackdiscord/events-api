@@ -6,10 +6,10 @@ const logger = winston.createLogger({
     level: "info",
     format: winston.format.combine(
         winston.format.timestamp(),
-        winston.format.json(),
-        winston.format.colorize({
-            message: true
-        })
+        winston.format.json()
+        // winston.format.colorize({
+        //     message: true
+        // })
     ),
     defaultMeta: { service: "events-api" },
     transports: [

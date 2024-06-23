@@ -59,7 +59,7 @@ func handleMessageDelete(data string) {
 	desc := fmt.Sprintf("**Channel:** <#%s> (%s)\n**Author:** <@%s> (%s)", msg.ChannelID, msg.ChannelID, msg.Author.ID, msg.Author.ID)
 
 	if msg.Content != "" {
-		desc += fmt.Sprintf("\n\n**Content:** `%s`", msg.Content)
+		desc += fmt.Sprintf("\n\n**Content:** ```%s```", msg.Content)
 	}
 
 	if len(msg.Attachments) > 0 {

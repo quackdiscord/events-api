@@ -64,6 +64,8 @@ func handleMessageUpdate(data string) {
 		desc += fmt.Sprintf("\n\n**Content:** ```diff\n- %s\n+%s```", msg.OldContent, msg.NewContent)
 	}
 
+	desc += fmt.Sprintf("\n[Jump to message](%s)", fmt.Sprintf("https://discord.com/channels/%s/%s/%s", msg.GuildID, msg.ChannelID, msg.ID))
+
 	// make a post request to the webhook
 	embed := structs.Embed{
 		Title:       "Message edited",
